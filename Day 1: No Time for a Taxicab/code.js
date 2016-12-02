@@ -2,6 +2,7 @@ var fs = require('fs');
 var path = require('path');
 
 var visitedLocations = [];
+var x = 0, y = 0;
 
 function parse(arr) {
     var formattedArray = [];
@@ -26,29 +27,39 @@ function readAndParseFile(callback) {
     });
 }
 
-// function isPreviouslyVisited(x, y) {
-//     console.log('Checking: ' + x + ',' + y);
-//     for (var i = 0; i < visitedLocations.length; i++) {
-//         if (visitedLocations[i].x == x && visitedLocations[i].y == y) {
-//             return true;
-//         }
-//     }
-//     visitedLocations.push({
-//         x: x,
-//         y: y
-//     });
-//     return false;
-// }
+function isPreviouslyVisited() {
+    for (var i = 0; i < visitedLocations.length; i++) {
+        if (visitedLocations[i].x == x && visitedLocations[i].y == y) {
+            return true;
+        }
+    }
+    visitedLocations.push({
+        x: x,
+        y: y
+    });
+    return false;
+}
 
-// function move(currentX, currentY, deltaX, deltaY) {
-//     currentX
-// }
-
+function move(deltaX, deltaY, increment) {
+    for (var i=0; i < deltaX; i++) {
+        x += increment;
+        if(isPreviouslyVisited()){
+            return true;
+        }
+    }
+    for (var i=0; i <deltaY; i++) {
+        y += increment;
+        if(isPreviouslyVisited()){
+            return true;
+        }
+    }
+    return false;
+}
 
 readAndParseFile(function(moves){
     var compass = ['N', 'E', 'S', 'W']
-    var x = 0, y = 0;
     var currentDirectionIndex = 0;
+    var hasVisited = false;
 
     for (var i = 0; i < moves.length; i++) {
         if (moves[i].direction == 'R') {
@@ -66,22 +77,22 @@ readAndParseFile(function(moves){
         console.log(compass[currentDirectionIndex] + ' ' + moves[i].steps)
         switch (compass[currentDirectionIndex]) {
             case 'N':
-                y += moves[i].steps;
+                hasVisited = move(0, moves[i].steps, 1);
                 break;
             case 'S':
-                y -= moves[i].steps;
+                hasVisited = move(0, moves[i].steps, -1);
                 break;
             case 'E':
-                x += moves[i].steps;
+                hasVisited = move(moves[i].steps, 0, 1);
                 break;
             case 'W':
-                x -= moves[i].steps;
+                hasVisited = move(moves[i].steps, 0, -1);
                 break;
         }
 
-        // if (isPreviouslyVisited(x, y)) {
-        //     break;
-        // }
+        if(hasVisited) {
+            break;
+        }
     }
 
     console.log('X: ' + x);
