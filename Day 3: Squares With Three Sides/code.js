@@ -5,18 +5,16 @@ var path = require('path');
 function formatInput(input) {
     var newArray = [];
 
-    for(var i=0; i < input.length; i++) {
-        if(input[i].length < 3){
-            continue;   // skip anything that couldn't have 3 sides
-        }
-        
+    for(var i=0; i < input.length; i++) {        
         var currentTriangle = [];
         for(var j=0; j<input[i].length; j++) {
             if(input[i][j] != ''){
                 currentTriangle.push(parseInt(input[i][j]));
             }
         }
-        newArray.push(currentTriangle);
+        if(currentTriangle.length > 0){
+            newArray.push(currentTriangle);
+        }
     }
     return newArray;
 }
@@ -43,10 +41,28 @@ function checkAllSides(lengths) {
         && lengths[0] + lengths[2] > lengths[1];
 }
 
+function constructTriangles(data) {
+    var triangles = [];
+    var currentTriangle = [];
+
+    for(var i=0; i < 3; i++) {
+        for(var j=0; j< data.length; j++) {
+            currentTriangle.push(data[j][i]);
+            if(currentTriangle.length === 3){
+                triangles.push(currentTriangle);
+                currentTriangle = [];
+            }
+        }
+    }
+
+    return triangles;
+}
+
 readAndParseFile(function(data){
     var count = 0;
-    for(var i=0; i < data.length; i++){
-        if(checkAllSides(data[i])){
+    var triangles = constructTriangles(data);
+    for(var i=0; i < triangles.length; i++){
+        if(checkAllSides(triangles[i])){
             count++;
         }
     }
