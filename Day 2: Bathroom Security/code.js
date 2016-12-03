@@ -1,11 +1,13 @@
 var fs = require('fs');
 var path = require('path');
-var verticalIndex = 0;
+var verticalIndex = 2;
 var horizontalIndex = 0;
 var keypad = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9]
+    ['0', '0', '1', '0', '0'],
+    ['0', '2', '3', '4', '0'],
+    ['5', '6', '7', '8', '9'],
+    ['0', 'A', 'B', 'C', '0'],
+    ['0', '0', 'D', '0', '0']
 ];
 
 function readAndParseFile(callback) {
@@ -25,22 +27,30 @@ function processInputLine(input){
         switch(input[i]){
             case 'U':
                 if (verticalIndex > 0){
-                    verticalIndex--;
+                    if(keypad[verticalIndex -1][horizontalIndex] != '0'){
+                        verticalIndex--;
+                    }
                 }
                 break;
             case 'D':
-                if (verticalIndex < 2){
-                    verticalIndex++;
+                if (verticalIndex < 4){
+                    if(keypad[verticalIndex + 1][horizontalIndex] != '0'){
+                        verticalIndex++;
+                    }
                 }
                 break;
             case 'L':
                 if (horizontalIndex > 0){
-                    horizontalIndex--;
+                    if(keypad[verticalIndex][horizontalIndex-1] != '0'){
+                        horizontalIndex--;
+                    }
                 }
                 break;
             case 'R':
-                if (horizontalIndex < 2){
-                    horizontalIndex++;
+                if (horizontalIndex < 4){
+                    if(keypad[verticalIndex][horizontalIndex+1] != '0'){
+                        horizontalIndex++;
+                    }
                 }
                 break;
         }
