@@ -13,7 +13,7 @@ function readAndParseFile(callback) {
                 }
 
                 var inputObj = {
-                    name: lines[i].substring(0, lines[i].lastIndexOf('-')).replace(new RegExp('-', 'g'),''),
+                    name: lines[i].substring(0, lines[i].lastIndexOf('-')),
                     sectionId: parseInt(lines[i].substring(lines[i].lastIndexOf('-') + 1, lines[i].indexOf('['))),
                     checksum: lines[i].substring(lines[i].indexOf('[') + 1, lines[i].indexOf(']'))
                 };
@@ -29,7 +29,9 @@ function readAndParseFile(callback) {
 function isValid(room){
     var counter = {};
     for(var i=0; i < room.name.length; i++) {
-        if(counter[room.name[i]] === undefined) {
+        if(room.name[i] === '-') {
+            continue;
+        } else if(counter[room.name[i]] === undefined) {
             counter[room.name[i]] = 1;
         } else {
             counter[room.name[i]]++;
@@ -57,13 +59,39 @@ function isValid(room){
     return valid;
 }
 
+function shift(letter, amount) {
+    var num = letter.charCodeAt(0);
+    for(var i=0; i<amount; i++) {
+        if(num === 122){
+            num = 97;
+        } else {
+            num = num + 1;
+        }
+    }
+    return String.fromCharCode(num);
+}
+
+function decrypt(name, sectionId) {
+    var decryptedName = '';
+    for(var i=0; i < name.length; i++) {
+        if(name[i] === '-'){
+            decryptedName += ' ';
+        } else {
+            decryptedName += shift(name[i], sectionId);
+        }
+    }
+    return decryptedName;
+}
+
 readAndParseFile(function(data){
-    var realRoomsSum = 0;
+    var realRooms = [];
     for(var i = 0; i < data.length; i++) {
         if(isValid(data[i])) {
-            realRoomsSum += data[i].sectionId;
+            realRooms.push(data[i]);
         }
     }
 
-    console.log('Sum of valid section IDs: ' + realRoomsSum);
+    for(var i=0; i < realRooms.length; i++) {
+        console.log(realRooms[i].sectionId + ': ' + decrypt(realRooms[i].name, realRooms[i].sectionId));
+    }
 });
