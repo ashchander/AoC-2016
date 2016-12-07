@@ -26,7 +26,7 @@ function readAndParseFile(callback) {
     });
 }
 
-function getMostCommonLetter(string) {
+function getLeastCommonLetter(string) {
     var counter = {};
 
     for(var i=0; i<string.length; i++) {
@@ -37,20 +37,20 @@ function getMostCommonLetter(string) {
         }
     }
     
-    var max = { letter: '', value: 0};
+    var min = { letter: '', value: 9999999};
     for(var key in counter) {
-        if(counter[key] > max.value) {
-            max.value = counter[key];
-            max.letter = key;
+        if(counter[key] < min.value) {
+            min.value = counter[key];
+            min.letter = key;
         }
     }
-    return max.letter;
+    return min.letter;
 }
 
 readAndParseFile(function(data){
     var output = '';
     for(var i=0; i<data.length; i++) {
-        output += getMostCommonLetter(data[i]);
+        output += getLeastCommonLetter(data[i]);
     }
     
     console.log(output);
