@@ -47,8 +47,32 @@ function abbaPatternMatches(string) {
     return false;
 }
 
+function sslPatternMatches(input) {
+    var babGroups = [];
+    
+    for(var i=0; i < input.normal.length; i++) {
+        for(var j=0; j < input.normal[i].length-2; j++) {
+            if(input.normal[i][j] === input.normal[i][j + 2] 
+                && input.normal[i][j] !== input.normal[i][j + 1]) {
+                babGroups.push(input.normal[i][j+1] + input.normal[i][j] + input.normal[i][j+1])
+            }
+        }    
+    }
+
+    for(var i=0; i < input.hypernet.length; i++) {
+        for(var j=0; j < babGroups.length; j++) {
+            if(input.hypernet[i].indexOf(babGroups[j]) !== -1) {
+                return true;
+            }
+        }    
+    }
+
+    return false;
+}
+
 readAndParseFile(function(data){
     var counter = 0;
+    var counterSsl = 0;
 
     for(var i=0; i < data.length; i++) {
         var normalMatches = false;
@@ -71,7 +95,12 @@ readAndParseFile(function(data){
         if(normalMatches && !hypernetMatches) {
             counter++;
         }
+
+        if(sslPatternMatches(data[i])) {
+            counterSsl++;
+        }
     }
 
-    console.log(counter);
+    console.log('ABBA matches: ' + counter);
+    console.log('ABA matches: ' + counterSsl);
 });
